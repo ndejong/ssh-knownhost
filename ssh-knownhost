@@ -7,6 +7,7 @@ hashed_hostnames_arg=${3-"hashed"}
 # check imput args exist
 if [ -z ${hostname} ] || [ -z ${fingerprint} ]; then
     echo "Usage: `basename $0` <hostname> <ssh-fingerprint> [not_hashed]"
+    exit 0
 fi
 
 # determine the fingerprint_hash mode that will be used
@@ -30,7 +31,7 @@ tempfile="/tmp/ssh-knownhost-add-`head /dev/urandom | sha256sum | head -c16`"
 ssh-keyscan ${hashed_hostnames} "${hostname}" 1> "${tempfile}" 2>/dev/null
 
 # check if the fingerprint appears in the ssh-keygen output and append to outputfile
-if [ `ssh-keygen -E ${fingerprint_hash} -l -f "${tempfile}" -F "${hostname}" | grep "${fingerprint}" | wc -l` -gt 0 ]; then
+if [ `ssh-keygen -E ${fingerprint_hash} -l -f "${tempfile}" -F "${hostname}" | grep -i "${fingerprint}" | wc -l` -gt 0 ]; then
     cat "${tempfile}"
 else
     >&2 echo "No matching fingerprint"
