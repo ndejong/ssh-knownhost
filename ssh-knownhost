@@ -1,0 +1,41 @@
+#!/bin/bash
+
+hostname=${1}
+fingerprint=${2}
+hashed_hostnames_arg=${3-"hashed"}
+
+# check imput args exist
+if [ -z ${hostname} ] || [ -z ${fingerprint} ]; then
+    echo "Usage: `basename $0` <hostname> <ssh-fingerprint> [not_hashed]"
+fi
+
+# determine the fingerprint_hash mode that will be used
+if [ `echo -n "${fingerprint}" | cut -d':' -f16 | wc -c` -lt 4 ]; then
+    fingerprint_hash='md5'
+else
+    fingerprint_hash='sha256'
+fi
+
+# deal with hostname_not_hashed
+if [ ${hashed_hostnames_arg} == "not_hashed" ]; then
+    hashed_hostnames=""
+else
+    hashed_hostnames="-H"
+fi
+
+# establish a tempfile name to use
+tempfile="/tmp/ssh-knownhost-add-`head /dev/urandom | sha256sum | head -c16`"
+
+# query the host
+ssh-keyscan ${hashed_hostnames} "${hostname}" 1> "${tempfile}" 2>/dev/null
+
+# check if the fingerprint appears in the ssh-keygen output and append to outputfile
+if [ `ssh-keygen -E ${fingerprint_hash} -l -f "${tempfile}" -F "${hostname}" | grep "${fingerprint}" | wc -l` -gt 0 ]; then
+    cat "${tempfile}"
+else
+    >&2 echo "No matching fingerprint"
+fi
+
+# remove the temp file
+rm -f "${tempfile}"
+
