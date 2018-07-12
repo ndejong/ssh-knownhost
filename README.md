@@ -37,3 +37,8 @@ No matching fingerprint
 ## Some AWS CodeCommit known SSH server fingerprints
 * https://docs.aws.amazon.com/codecommit/latest/userguide/regions.html#regions-fingerprints
 
+## Authors
+This code is managed by [Verb Networks](https://github.com/verbnetworks).
+
+## License
+Apache 2 Licensed. See LICENSE file for full details.

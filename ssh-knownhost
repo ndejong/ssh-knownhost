@@ -1,5 +1,11 @@
 #!/bin/bash
 
+# Copyright (c) 2018 Verb Networks Pty Ltd <contact [at] verbnetworks.com>
+#  - All rights reserved.
+#
+# Apache License v2.0
+#  - http://www.apache.org/licenses/LICENSE-2.0
+
 hostname=${1}
 fingerprint=${2}
 hashed_hostnames_arg=${3-"hashed"}
